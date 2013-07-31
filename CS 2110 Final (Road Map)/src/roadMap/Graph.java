@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Graph {
@@ -92,18 +93,32 @@ public class Graph {
 		}//End else
 	}//End Method
 	
-	private void verticesRemove(Village v,Road e){
+	private void verticesRemove(Village v,Road e, Village target){
 		LinkedList<Road> temp = vertices.get(v);//Get list from map
-		if (temp.size()==1) {
+		if (temp.size()==1&&v!=target) {
 			//create new path
-			
-			stVertices.remove(e.tip().toString());
-			
+			Village successor=vertices.keySet().iterator().next();
 			System.out.println(e+" is the last road to or from "+v);
+			if (successor==target){
+				Iterator<Village> i = vertices.keySet().iterator();
+				i.next();
+				successor=i.next();
+			}//End if
+			System.out.println("Would you like to join it back to the map? At point " + successor);
+			Scanner scn =new Scanner(System.in);
+			String input = scn.nextLine();
+			scn.close();
+			if (input.equalsIgnoreCase("yes")) {
+				addEdge(successor,v,e.weight(),null);
+			}//End if modify
+			else {
+			stVertices.remove(e.tip().toString());
+			}
+			//System.out.println(e+" is the last road to or from "+v);
 		}
 		temp.remove(e);//remove road from list;
 		vertices.put(v, temp);//Overwrite data in map
-	}
+	}//End Method
 	
 	/**
 	 * Adds an edge to the graph.
@@ -145,25 +160,25 @@ public class Graph {
 		if (e.findEdge(tail, tip)!=null){//Found it
 			if (e.findEdge(tail,tip).pair()!=null) {
 				tip.edges().remove(tip.edges().indexOf(e.findEdge(tip,tail)));
-				verticesRemove(tip,e.findEdge(tip, tail));//Remove for tip
-				verticesRemove(tail,e.findEdge(tip, tail));//Remove pair for tail
+				verticesRemove(tip,e.findEdge(tip, tail),tail);//Remove for tip
+				verticesRemove(tail,e.findEdge(tip, tail),tail);//Remove pair for tail
 			}//End if to remove pair
 			tail.edges().remove(tail.edges().indexOf(e.findEdge(tail,tip)));
-			verticesRemove(tip,e.findEdge(tail, tip));//Remove for tip
-			verticesRemove(tail,e.findEdge(tail, tip));//Remove pair for tail
+			verticesRemove(tip,e.findEdge(tail, tip),tip);//Remove for tip
+			verticesRemove(tail,e.findEdge(tail, tip),tip);//Remove pair for tail
 		}//End if
 		
 		}//End for
 	}//End Method
 	
-	private void removeEdge(Road e) {
+	private void removeEdge(Road e,Village target) {
 		if (e!=null){
 			System.out.println(e);
 			if (e.pair()!=null) {
 				e.tip().edges().remove(e.tip().edges().indexOf(e.findEdge(e.tip(),e.tail())));
 				edges.remove(e.pair());
-				verticesRemove(e.tip(),e.pair());//Remove for tip
-				verticesRemove(e.tail(),e.pair());//Remove pair for tail
+				verticesRemove(e.tip(),e.pair(),target);//Remove for tip
+				verticesRemove(e.tail(),e.pair(),target);//Remove pair for tail
 			}//End if to remove pair
 			
 			//if (e.findEdge(e.tail(),e.tip()).tip().edges().size()==1 && e.findEdge(e.tail(),e.tip()).tip().edges().contains(e)) {
@@ -171,8 +186,8 @@ public class Graph {
 			//}
 			e.tail().edges().remove(e.tail().edges().indexOf(e.findEdge(e.tail(),e.tip())));
 			edges.remove(e);
-			verticesRemove(e.tip(),e);//Remove for tip
-			verticesRemove(e.tail(),e);//Remove pair for tail
+			verticesRemove(e.tip(),e,target);//Remove for tip
+			verticesRemove(e.tail(),e,target);//Remove pair for tail
 			System.out.println("Done: "+edges);
 		}//End if
 	}//End Method
@@ -192,7 +207,8 @@ public class Graph {
 	}//End remove Vertex
 	
 	private void removeVertex(Village v){
-		System.out.println(v.edges().size());
+		System.out.println("Linked verts" + vertices.get(v));
+		/**
 		for(int i=0;i<v.edges().size();i++) {
 			removeEdge(v.edges().get(i));
 		}//End for
@@ -205,6 +221,16 @@ public class Graph {
 			j++;
 			System.out.println(j +"Edges size: "+ edges.size());
 		}//end while
+		*/
+		LinkedList<Road> roads = vertices.get(v);
+		
+		while(0< roads.size()){
+			removeEdge(roads.get(0),v);
+			
+			System.out.println("Linked verts"+roads+ "\nroads="+roads.size());
+			System.out.println(0<roads.size());
+		}//end for
+		System.out.println("while done");
 		/*for (int j=0;j<edges.size();j++) {
 			if(edges.get(j).tip()==v){
 				removeEdge(edges.get(j));
