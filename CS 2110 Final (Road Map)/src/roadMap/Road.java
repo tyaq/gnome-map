@@ -50,6 +50,10 @@ public class Road implements Comparable<Object> {
 		return pair;
 	}//end getPair
 	
+	public void setPair(Road p){
+		pair=p;
+	}
+	
 	public Road findEdgeToTip(Village ti){
 		if (tip==ti) {
 			return this;

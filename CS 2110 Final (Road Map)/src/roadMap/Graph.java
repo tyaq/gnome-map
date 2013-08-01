@@ -27,6 +27,11 @@ public class Graph {
 		this.vertices=v;
 		this.edges=e;
 	}//End Constructor
+	
+	public Graph getGraph(){
+		return this;
+	}
+	
 	/**
 	 * Parses Strings input to edge format
 	 * Adds an edge to the graph.
@@ -37,7 +42,7 @@ public class Graph {
 	 * @param tip Where it goes to
 	 * @param weight The edge's weight
 	 */
-	public void addEdge(String tail,String tip,String weight) {
+	public void addEdge(String tail,String tip,String weight,boolean undirected) {
 		Village tailV=null, tipV=null;//Used for converting String to Node
 		
 		//Create new vertices if they do not exist or else fetch them
@@ -58,7 +63,14 @@ public class Graph {
 		
 		int w=Integer.parseInt(weight);
 		
+		if (undirected) {
+			Road r  = addEdge(tipV,tailV,w,null);
+			Road s =addEdge(tipV,tailV,w,r);//Call actual add Method
+			r.setPair(s);
+		} else {
+		
 		addEdge(tipV,tailV,w,null);//Call actual add Method
+		}//end else
 	}//End addEdge
 	
 	/**
@@ -70,7 +82,7 @@ public class Graph {
 	 * @param tip Where it goes to
 	 * @param weight The edge's weight
 	 */
-	private void addEdge(Village tip, Village tail, int weight,Road p) {
+	private Road addEdge(Village tip, Village tail, int weight,Road p) {
 		// TODO Auto-generated method stub
 		
 		//Enter parsed data into data structures
@@ -78,6 +90,7 @@ public class Graph {
 		verticesAdd(tip,e);//Record the tip
 		verticesAdd(tail,e);//Record the tail
 		edges.add(e);//Record for legacy
+		return e;
 	}//End addEdge
 	
 	private void verticesAdd(Village v,Road e){
@@ -526,7 +539,11 @@ public class Graph {
 	 */
 	public HashMap<String,Village> vertices(){
 		return stVertices;
-	}//End getVertacies
+	}//End getstVertacies
+	
+	public HashMap<Village,LinkedList<Road>> verticesConnections(){
+		return vertices;
+	}//End getVertices
 	
 	/**
 	 * 
