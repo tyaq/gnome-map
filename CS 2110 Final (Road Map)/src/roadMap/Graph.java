@@ -65,7 +65,7 @@ public class Graph {
 		
 		if (undirected) {
 			Road r  = addEdge(tipV,tailV,w,null);
-			Road s =addEdge(tipV,tailV,w,r);//Call actual add Method
+			Road s =addEdge(tailV,tipV,w,r);//Call actual add Method
 			r.setPair(s);
 		} else {
 		
