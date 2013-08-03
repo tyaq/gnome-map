@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -27,23 +28,18 @@ public class MenuBar {
 	JTextArea output;
     JScrollPane scrollPane;
     
-    private Graph g;
-    private PaintGraph pg;
-    private JMenuBar m;
     
-    public MenuBar(Graph g,PaintGraph pg){
-    		this.g=g;
-    		this.pg=pg;
-    		m = createMenuBar();
+    public MenuBar(){
+    	
     }
     
-    public Graph graph(){
-    		return g;
-    }//End get graph
+//    public Graph graph(){
+//    		return g;
+//    }//End get graph
     
-    public JMenuBar menu(){
-    		return m;
-    }//End get Menu
+//    public JMenuBar menu(){
+//    		return m;
+//    }//End get Menu
     
     public JMenuBar createMenuBar() {
         JMenuBar menuBar;
@@ -67,24 +63,23 @@ public class MenuBar {
                                  KeyEvent.VK_A);
         //menuItem.setMnemonic(KeyEvent.VK_T); //used constructor instead
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_1, ActionEvent.ALT_MASK));
+                KeyEvent.VK_V, ActionEvent.ALT_MASK));
         menuItem.getAccessibleContext().setAccessibleDescription(
                 "This doesn't really do anything");
         class addv implements ActionListener{
         	
         		public void actionPerformed (ActionEvent e){
-        			JTextField vName = new JTextField();
+        			String guess = roadMap.Village.numberOfVillages+"";
+        			JTextField vName = new JTextField(guess);
         			JPanel panel = new JPanel(new GridLayout(2,0));
         			panel.add(new JLabel("Village Name:"));
         			panel.add(vName);
         			int result = JOptionPane.showConfirmDialog(null, panel, "Add Village",
     		        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
     		        if (result == JOptionPane.OK_OPTION) {
-    		            g.addVertex(vName.getText());
-    		            pg.setGraph(g);
-    		            pg.validate();
-    		            pg.repaint();
-    		            pg.validate();
+    		            GUI.g.addVertex(vName.getText());
+    		            GUI.pg.setGraph(GUI.g);
+    		            GUI.pg.repaint();
     		        } else {
     		            System.out.println("Cancelled");
     		        }//End else
@@ -98,6 +93,26 @@ public class MenuBar {
         			//delete
         menuItem = new JMenuItem("Delete Village");
         menuItem.setMnemonic(KeyEvent.VK_D);
+        class deletev implements ActionListener{
+        	
+    		public void actionPerformed (ActionEvent e){
+    			JTextField vName = new JTextField();
+    			JPanel panel = new JPanel(new GridLayout(2,0));
+    			panel.add(new JLabel("Village Name:"));
+    			panel.add(vName);
+    			int result = JOptionPane.showConfirmDialog(null, panel, "Add Village",
+		        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		        if (result == JOptionPane.OK_OPTION) {
+		            GUI.g.removeVertex(vName.getText());
+		            GUI.pg.setGraph(GUI.g);
+		            GUI.pg.repaint();
+		        } else {
+		            System.out.println("Cancelled");
+		        }//End else
+    		    
+    		}
+    }//end class
+    menuItem.addActionListener(new deletev());
         menu.add(menuItem);
  
         //Build second menu in the menu bar.
@@ -110,12 +125,121 @@ public class MenuBar {
         //2nd menu items
         menuItem= new JMenuItem("Add Road");
         menuItem.setMnemonic(KeyEvent.VK_A);
+        class addr implements ActionListener{
+        	
+    		public void actionPerformed (ActionEvent e){
+    			JTextField tail = new JTextField();
+    			JTextField tip = new JTextField();
+    			JTextField weight = new JTextField();
+    			JCheckBox twoWay =new JCheckBox();
+    			JPanel panel = new JPanel(new GridLayout(1,3));
+    			panel.add(new JLabel("Edge:"));
+    			panel.add(tail);
+    			panel.add(new JLabel("------->"));
+    			panel.add(tip);
+    			panel.add(new JLabel("Weight:"));
+    			panel.add(weight);
+    			panel.add(new JLabel("Two Way:"));
+    			panel.add(twoWay);
+    			int result = JOptionPane.showConfirmDialog(null, panel, "Add Road",
+		        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		        if (result == JOptionPane.OK_OPTION) {
+		        		GUI.g.addEdge(tail.getText(), tip.getText(), weight.getText(), twoWay.isSelected());
+		            GUI.pg.setGraph(GUI.g);
+		            GUI.pg.repaint();
+		        } else {
+		            System.out.println("Cancelled");
+		        }//End else
+    		    
+    			}
+        }//end class
+        menuItem.addActionListener(new addr());
         menu.add(menuItem);
         
         menuItem=new JMenuItem("Delete Road");
         menuItem.setMnemonic(KeyEvent.VK_D);
+        class deleter implements ActionListener{
+        	
+    		public void actionPerformed (ActionEvent e){
+    			JTextField tail = new JTextField();
+    			JTextField tip = new JTextField();
+    			JPanel panel = new JPanel(new GridLayout(1,3));
+    			panel.add(new JLabel("Edge:"));
+    			panel.add(tail);
+    			panel.add(new JLabel("------->"));
+    			panel.add(tip);
+    			int result = JOptionPane.showConfirmDialog(null, panel, "Remove Road",
+		        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		        if (result == JOptionPane.OK_OPTION) {
+		        		GUI.g.removeEdge(tail.getText(), tip.getText());
+		            GUI.pg.setGraph(GUI.g);
+		            GUI.pg.repaint();
+		        } else {
+		            System.out.println("Cancelled");
+		        }//End else
+    		    
+    			}
+        }//end class
+        menuItem.addActionListener(new deleter());
         menu.add(menuItem);
  
+        //Third subMenu
+        menu = new JMenu("Network");
+        menu.setMnemonic(KeyEvent.VK_N);
+        menu.getAccessibleContext().setAccessibleDescription(
+                "Use functions which are done over the current graph");
+        menuBar.add(menu);
+        
+        menuItem=new JMenuItem("Maximum Flow");
+        menuItem.setMnemonic(KeyEvent.VK_F);
+        class maxflow implements ActionListener{
+        	
+    		public void actionPerformed (ActionEvent e){
+    			JTextField source = new JTextField();
+    			JTextField sink = new JTextField();
+    			JPanel panel = new JPanel(new GridLayout(1,3));
+    			panel.add(new JLabel("Source Village:"));
+    			panel.add(source);
+    			panel.add(new JLabel("Sink Village:"));
+    			panel.add(sink);
+    			int result = JOptionPane.showConfirmDialog(null, panel, "Maximum Flow(Ford-Fulkerson)",
+		        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		        if (result == JOptionPane.OK_OPTION) {
+		        		int flow = GUI.g.maxFlow(source.getText(), sink.getText());
+		        		JOptionPane.showMessageDialog(null, "The maximum flow from "+source.getText()+" to "+sink.getText()+" with this road network is "+flow+".");
+		        } else {
+		            System.out.println("Cancelled");
+		        }//End else
+    		    
+    			}
+        }//end class
+        menuItem.addActionListener(new maxflow());
+        menu.add(menuItem);
+        
+        menuItem=new JMenuItem("Austerity");
+        menuItem.setMnemonic(KeyEvent.VK_A);
+        class mst implements ActionListener{
+        	
+    		public void actionPerformed (ActionEvent e){
+    			int result = JOptionPane.showConfirmDialog(null, "Austerity measures will be taken within this kingdom.\n"
+    					+ " Any roads deemed no essential to the network will be bulldozed, for resources,\n"
+    					+ " Also all remaining roads will become two-way roads.\n"
+    					+ " Gnomes may be replaced, but probably not.", "Austerity(Kruskal MST)",
+		        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		        if (result == JOptionPane.OK_OPTION) {
+		        		Graph gr=GUI.g.kruskal().toUndirected();
+		        		GUI.pg.setGraph(gr);
+			        GUI.pg.repaint();
+		        		
+		        } else {
+		            System.out.println("Cancelled");
+		        }//End else
+    		    
+    			}
+        }//end class
+        menuItem.addActionListener(new mst());
+        menu.add(menuItem);
+        
         return menuBar;
     }
  

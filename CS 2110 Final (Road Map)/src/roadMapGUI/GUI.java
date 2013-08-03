@@ -25,6 +25,10 @@ import javax.swing.JMenu;
 
 public class GUI extends JFrame{
 	
+	public static Graph g =new Graph();
+	public static PaintGraph pg=new PaintGraph(g);
+	public static MenuBar menu = new MenuBar();
+	
 	public static void main(String[] args){
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
@@ -34,12 +38,9 @@ public class GUI extends JFrame{
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
 	    //Create and set up the content pane.
-	    Graph g =new Graph();
-	    	PaintGraph pg = new PaintGraph(g);
 	    
 	    frame.add(pg);
-	    MenuBar menu = new MenuBar(g,pg);
-	    frame.setJMenuBar(menu.menu());
+	    frame.setJMenuBar(menu.createMenuBar());
 	    //frame.setContentPane(demo.createContentPane());
 	    
 	    //Display the window.

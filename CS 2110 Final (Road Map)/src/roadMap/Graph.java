@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Set;
 
+import javax.swing.*;
+
 public class Graph {
 
 	private HashMap<String,Village> stVertices;//Storage of String parsing in Graph
@@ -108,29 +110,43 @@ public class Graph {
 	
 	private void verticesRemove(Village v,Road e, Village target){
 		LinkedList<Road> temp = vertices.get(v);//Get list from map
+		
 		if (temp.size()==1&&v!=target) {
 			//create new path
 			Village successor=vertices.keySet().iterator().next();
 			System.out.println(e+" is the last road to or from "+v);
+			String s = e+" is the last road to or from "+v+"\n"; 
 			if (successor==target){
 				Iterator<Village> i = vertices.keySet().iterator();
 				i.next();
 				successor=i.next();
 			}//End if
+			s+="Would you like to join it back to the map, at point " + successor+"?";
+			int reply = JOptionPane.showConfirmDialog(null, s, "Creating an island", JOptionPane.YES_NO_OPTION);
 			System.out.println("Would you like to join it back to the map? At point " + successor);
-			Scanner scn =new Scanner(System.in);
-			String input = scn.nextLine();
-			scn.close();
-			if (input.equalsIgnoreCase("yes")) {
+			
+			if (reply == JOptionPane.YES_OPTION) {
 				addEdge(successor,v,e.weight(),null);
 			}//End if modify
 			else {
 			stVertices.remove(e.tip().toString());
+			
 			}
 			//System.out.println(e+" is the last road to or from "+v);
 		}
+		edges.remove(e);
 		temp.remove(e);//remove road from list;
-		vertices.put(v, temp);//Overwrite data in map
+		if (temp.isEmpty()) {
+			stVertices.remove(v.toString());
+			vertices.remove(v);
+			v=null;
+		} else {
+			vertices.put(v, temp);//Overwrite data in map
+		}if (vertices.get(v)==null) {
+			vertices.remove(v);
+			
+			v=null;
+		}//end if
 	}//End Method
 	
 	/**
@@ -157,6 +173,8 @@ public class Graph {
 		
 		//Check that entered vertices exist
 		if (!(stVertices.containsKey(tail) && stVertices.containsKey(tip))) {
+			
+			JOptionPane.showMessageDialog(null, "One of the entered Villages does not exist.");
 			System.out.println("One of the entered Villages does not exist.");
 			return;
 		}//end if
@@ -168,19 +186,25 @@ public class Graph {
 	}//End string parsing method
 	
 	private void removeEdge(Village tail, Village tip) {//Very ineffiecnt
-		for(Road e:edges) {//We do not know if it exists yet
-		//tail.edges().indexOf(e.findEdge(tail,tip));
+		int i=0;
+		while(i<edges.size()) {//We do not know if it exists yet
+		Road e =edges.get(i);
+			//tail.edges().indexOf(e.findEdge(tail,tip));
 		if (e.findEdge(tail, tip)!=null){//Found it
 			if (e.findEdge(tail,tip).pair()!=null) {
-				tip.edges().remove(tip.edges().indexOf(e.findEdge(tip,tail)));
-				verticesRemove(tip,e.findEdge(tip, tail),tail);//Remove for tip
-				verticesRemove(tail,e.findEdge(tip, tail),tail);//Remove pair for tail
+				tip.edges().remove(tip.edges().indexOf(e.pair()));
+				verticesRemove(tail,e.pair(),tip);//Remove pair for tail
+				verticesRemove(tip,e.pair(),tip);//Remove for tip
+				System.out.println(vertices);
+				
 			}//End if to remove pair
 			tail.edges().remove(tail.edges().indexOf(e.findEdge(tail,tip)));
-			verticesRemove(tip,e.findEdge(tail, tip),tip);//Remove for tip
-			verticesRemove(tail,e.findEdge(tail, tip),tip);//Remove pair for tail
+			edges.remove(e);
+			verticesRemove(tip,e,tail);//Remove for tip
+			verticesRemove(tail,e,tip);//Remove pair for tail
+			i=edges.size();//Stop the for
 		}//End if
-		
+		i++;
 		}//End for
 	}//End Method
 	
@@ -207,6 +231,7 @@ public class Graph {
 	
 	public void addVertex(String v){
 		if ((stVertices.containsKey(v))) {
+			JOptionPane.showMessageDialog(null, "The entered Villages does not exist.");
 			System.out.println("The entered Villages does not exist.");
 			return;
 		}//End if
@@ -221,6 +246,7 @@ public class Graph {
 		
 		//Check that entered vertices exist
 		if (!(stVertices.containsKey(v))) {
+			JOptionPane.showMessageDialog(null, "The entered Villages does not exist.");
 			System.out.println("The entered Villages does not exist.");
 			return;
 		}//end if
@@ -247,8 +273,14 @@ public class Graph {
 		}//end while
 		*/
 		LinkedList<Road> roads = vertices.get(v);
-		
+		System.out.println(roads);
+		if (roads.get(0)==null) {
+			stVertices.remove(v.toString());
+			vertices.remove(v);
+			v=null;
+		}else{
 		while(0< roads.size()){
+			System.out.println(roads);
 			removeEdge(roads.get(0),v);
 			
 			System.out.println("Linked verts"+roads+ "\nroads="+roads.size());
@@ -266,6 +298,7 @@ public class Graph {
 		stVertices.remove(v.toString());
 		
 		v=null;
+		}
 	}//End remove Vertex
 	
 	/**
@@ -281,6 +314,8 @@ public class Graph {
 		start=start.toString();
 		end=end.toString();
 		
+		System.out.println(start);
+		System.out.println(end);
 		//Create a flow and get its flow, then pass that into finding the max flow
 		HashMap<Road,Integer> flow = getFlow(vertices().get(start),vertices().get(end));
 		return maxFlow(flow, stVertices.get(start));
@@ -308,6 +343,7 @@ public class Graph {
 		
 		//Tell user that there is no path if one could not be found
 		if (path==null) {
+			JOptionPane.showMessageDialog(null, "Sorry there is no path between "+start+" and "+ end);
 			System.out.println("Sorry there is no path between "+start+" and "+ end);
 			return path;
 		} else {
@@ -408,7 +444,8 @@ public class Graph {
 		//Enter in the start
 		parent.put(start, null);
 		siblings.add(start);
-		
+		System.out.println(start);
+		System.out.println(siblings);
 		//Travels until it can search no more, all label is used when end is found
 		all: while(!siblings.isEmpty()) {
 			LinkedList<Village> newSibling = new LinkedList<Village>();
@@ -461,14 +498,18 @@ public class Graph {
 	 * @return Copies graph and turns directed edges into undirected edges
 	 */
 	public Graph toUndirected(){
-		Graph undirected = new Graph(stVertices,vertices,edges);//Copy digraph
+		Graph undirected = new Graph();//Copy digraph
 		
 		//Adds reverse edges to graph
-		for (Road e:edges) {
-			Village tip=e.tail();
-			Village tail=e.tip();
+		int i=0;
+		while (i<edges.size()) {
+			Road e=edges.get(i);
+			Village tail=e.tail();
+			Village tip=e.tip();
 			int weight=e.weight();
-			undirected.addEdge(tip, tail, weight,e);
+			String w =""+weight;
+			undirected.addEdge(tip.toString(),tail.toString(), w,true);
+			i++;
 		}//end For
 		
 		return undirected;

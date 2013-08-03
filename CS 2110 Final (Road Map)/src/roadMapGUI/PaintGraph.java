@@ -60,11 +60,12 @@ public class PaintGraph extends JComponent{
 		double dy =h/(seperations+1);
 		int r = (int) ((h-dx)/2);
 		int i = 1;//Segment shifter
-
+		
+		HashMap<Village, Point2D> tempCoordinates= new HashMap<Village, Point2D>();
 		for (Village v:g.verticesConnections().keySet()){
 			Point2D point =new Point2D.Double((r*(Math.cos((2*Math.PI/numV)*i)))+w/2,(r*(Math.sin((2*Math.PI/numV)*i)))+h/2);
 //			System.out.println(point);
-			coordinates.put(v, point);
+			tempCoordinates.put(v, point);
 			i++;
 			if (i+1==numV) {
 				System.out.println("error exceeded size");
@@ -79,7 +80,7 @@ public class PaintGraph extends JComponent{
 			}*/
 		}//End for
 		System.out.println("Done populating");
-		
+		coordinates=tempCoordinates;
 	}
 	
 	void populateCoordinates(Graph g){
@@ -119,6 +120,8 @@ public class PaintGraph extends JComponent{
 	final Color[] colors={new Color(245,165,3),new Color(74,217,217),new Color(242,56,90),new Color(233,241,209)};
 	
 	protected void paintComponent(Graphics graphics){
+		populateCircleCoordinates(g);
+		System.out.println(g);
 		Graphics2D g2 = (Graphics2D)graphics;
 		g2.setColor(Color.WHITE);
 		g2.fillRect(0, 0, getWidth(), getHeight());
@@ -177,8 +180,8 @@ public class PaintGraph extends JComponent{
 		}//end for
 		g2.setColor(Color.BLACK);
 		
-		
-		for (Village v:g.verticesConnections().keySet()) {
+		System.out.println(coordinates.keySet());
+		for (Village v:coordinates.keySet()) {
 			//v.draw(v);
 			Point2D point =coordinates.get(v);
 			

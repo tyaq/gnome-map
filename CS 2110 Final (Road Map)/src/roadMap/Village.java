@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Village {
 	
-	static int numberOfVillages = 1;
+	public static int numberOfVillages = 1;
 	private String data;//Holds that actual data, does not need to be String Could have been generic
 	private ArrayList<Road> edges;//Adjacency List
 	
