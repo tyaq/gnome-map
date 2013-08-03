@@ -19,9 +19,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import roadMap.Graph;
 import roadMap.Road;
@@ -308,6 +311,28 @@ public class MenuBar {
         menuItem.addActionListener(new gg());
         menu.add(menuItem);
         
+        menu.addSeparator();
+        
+        menu.add(new JLabel("Simulation Speed"));
+        
+        JSlider slide = new JSlider(JSlider.HORIZONTAL,1/2,
+        		2,1);
+        slide.setMajorTickSpacing(1);
+        slide.setPaintTicks(true);
+        
+        	class s implements ChangeListener{
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				// TODO Auto-generated method stub
+				JSlider source =(JSlider) e.getSource();
+				
+				roadMapGnomes.Gnome.setUserFactor(source.getValue());
+				
+			}
+        }//end class
+        slide.addChangeListener(new s());
+        menu.add(slide);
         return menuBar;
     }
  

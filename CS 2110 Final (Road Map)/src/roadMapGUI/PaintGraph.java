@@ -42,18 +42,11 @@ public class PaintGraph extends JComponent{
 		this.g=g;
 	}
 	
-	public void inject(JFrame frame){
-		//Paint graph
-        frame.add(new JScrollPane(this), BorderLayout.CENTER);
-        frame.pack();
-        frame.setLocationByPlatform(true);
-	}
-	
 	
 	void populateCircleCoordinates(Graph g){
 		//arrange them in gridish format
-		int h =700;
-		int w = 900;
+		int h =super.getHeight();
+		int w = super.getWidth();
 		int numV = g.verticesConnections().keySet().size();
 		int seperations = ((int) (Math.ceil(Math.sqrt(numV))));
 		double dx =w/(seperations+1);
@@ -85,8 +78,8 @@ public class PaintGraph extends JComponent{
 	
 	void populateCoordinates(Graph g){
 		//arrange them in gridish format
-		int h =700;
-		int w = 900;
+		int h =super.getHeight();
+		int w = super.getWidth();
 		int numV = g.verticesConnections().keySet().size();
 		int seperations = ((int) (Math.ceil(Math.sqrt(numV))));
 		double dx =w/(seperations+1);
@@ -118,7 +111,8 @@ public class PaintGraph extends JComponent{
 	
 	final static float dash1[] = {10.0f};
 	final Color[] colors={new Color(245,165,3),new Color(74,217,217),new Color(242,56,90),new Color(233,241,209)};
-	
+	int i=0;
+	int j=0;
 	protected void paintComponent(Graphics graphics){
 		populateCircleCoordinates(g);
 		System.out.println(g);
@@ -128,8 +122,7 @@ public class PaintGraph extends JComponent{
 		g2.setColor(Color.BLACK);
 		for (Road e:g.edges()) {
 			//e.draw(g);
-			
-			g2.setColor(colors[(int)(Math.random()*colors.length)]);
+			g2.setColor(colors[i]);
 			Point2D a = coordinates.get(e.tail());
 			Point2D b = coordinates.get(e.tip());
 			
@@ -177,6 +170,10 @@ public class PaintGraph extends JComponent{
 				g2.setColor(Color.BLACK);
 			}//Dashed line
 			g2.drawLine((int)a.getX(),(int) a.getY(),(int) b.getX(),(int) b.getY());
+			i++;
+			if (i>colors.length-1) {
+				i=0;
+			}
 		}//end for
 		g2.setColor(Color.BLACK);
 		
@@ -185,7 +182,7 @@ public class PaintGraph extends JComponent{
 			//v.draw(v);
 			Point2D point =coordinates.get(v);
 			
-			g2.drawImage(img[(int) (Math.random()*img.length)], (int) point.getX()-25, (int) point.getY()-40, 50, 50, null);
+			g2.drawImage(img[j], (int) point.getX()-25, (int) point.getY()-40, 50, 50, null);
 			g2.drawString(v.data(),((int) (point.getX())-4-25),((int) (point.getY())-4));
 			//Oval nodes
 //			g2.fillOval((int) point.getX()-15,(int) point.getY()-15, 30, 30);
@@ -193,6 +190,10 @@ public class PaintGraph extends JComponent{
 //			g2.drawString(v.data(),((int) (point.getX()))-4,((int) (point.getY()))+g2.getFontMetrics().getHeight()/2/2);
 //			g2.setColor(Color.BLACK);
 //			
+			j++;
+			if(j>img.length-1) {
+				j=0;
+			}//End if
 		}//End for
 	}//end Method
 	

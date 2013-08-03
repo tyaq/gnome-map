@@ -24,6 +24,7 @@ public class Gnome implements Runnable{
 	private String name;
 	private Village location;
 	private LinkedList<Road> path;
+	private static double userFactor=1;
 	private static final int TIMINGFACTOR=100;//Used for delaying treads
 	private int traveled;
     private int myNumber;
@@ -98,7 +99,7 @@ public class Gnome implements Runnable{
 	    		path.add(nextRoad);
 	    		traveled+=nextRoad.weight();
 	    		try {
-					this.wait(nextRoad.weight()*TIMINGFACTOR);
+					this.wait((int)(nextRoad.weight()*TIMINGFACTOR/userFactor));
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					System.out.println("interuption");
@@ -108,6 +109,10 @@ public class Gnome implements Runnable{
 	    		location=nextVill;
     		}//End if
     }//End travel method
+    
+    public static void setUserFactor(double f) {
+    		userFactor=f;
+    }
     
     public int traveled(){
     		return traveled;
@@ -120,4 +125,12 @@ public class Gnome implements Runnable{
     public LinkedList<Road> path(){
     		return path;
     }//end getPath
+    
+    public static double userFactor(){
+    		return userFactor;
+    }
+    
+    public static int TIMINGFACTOR(){
+    		return TIMINGFACTOR;
+    }//End getTIMEFACTOR
 }//End Class
