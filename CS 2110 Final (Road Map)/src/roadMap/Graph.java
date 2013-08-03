@@ -205,6 +205,17 @@ public class Graph {
 		}//End if
 	}//End Method
 	
+	public void addVertex(String v){
+		if ((stVertices.containsKey(v))) {
+			System.out.println("The entered Villages does not exist.");
+			return;
+		}//End if
+		
+		Village vill = new Village(v);
+		verticesAdd(vill,null);
+		stVertices.put(v,vill);
+	}
+	
 	public void removeVertex(String v){
 		Village vert=null;
 		

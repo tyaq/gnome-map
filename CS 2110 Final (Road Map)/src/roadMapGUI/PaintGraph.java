@@ -1,6 +1,7 @@
 package roadMapGUI;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -14,6 +15,8 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 import roadMap.Graph;
 import roadMap.Road;
@@ -21,6 +24,8 @@ import roadMap.Village;
 
 public class PaintGraph extends JComponent{
 	private BufferedImage[] img;
+	private HashMap<Village, Point2D> coordinates;
+	private Graph g;
 	public PaintGraph(Graph g){
 		coordinates =new HashMap<Village,Point2D>();
 		
@@ -33,8 +38,17 @@ public class PaintGraph extends JComponent{
 		
 	}//End gui method
 	
-	HashMap<Village, Point2D> coordinates;
-	Graph g;
+	public void setGraph(Graph g){
+		this.g=g;
+	}
+	
+	public void inject(JFrame frame){
+		//Paint graph
+        frame.add(new JScrollPane(this), BorderLayout.CENTER);
+        frame.pack();
+        frame.setLocationByPlatform(true);
+	}
+	
 	
 	void populateCircleCoordinates(Graph g){
 		//arrange them in gridish format
@@ -105,7 +119,7 @@ public class PaintGraph extends JComponent{
 	final Color[] colors={new Color(245,165,3),new Color(74,217,217),new Color(242,56,90),new Color(233,241,209)};
 	
 	protected void paintComponent(Graphics graphics){
-		Graphics2D g2 = (Graphics2D)graphics; 
+		Graphics2D g2 = (Graphics2D)graphics;
 		g2.setColor(Color.WHITE);
 		g2.fillRect(0, 0, getWidth(), getHeight());
 		g2.setColor(Color.BLACK);
