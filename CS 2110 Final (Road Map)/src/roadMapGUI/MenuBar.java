@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -23,6 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import roadMap.Graph;
+import roadMap.Road;
+import roadMapGnomes.GnomeGenerator;
 
 public class MenuBar {
 	JTextArea output;
@@ -40,6 +43,7 @@ public class MenuBar {
 //    public JMenuBar menu(){
 //    		return m;
 //    }//End get Menu
+    public static JMenu gnoMen = new JMenu("Gnomes");
     
     public JMenuBar createMenuBar() {
         JMenuBar menuBar;
@@ -216,6 +220,32 @@ public class MenuBar {
         menuItem.addActionListener(new maxflow());
         menu.add(menuItem);
         
+        menuItem=new JMenuItem("Shortest Path");
+        menuItem.setMnemonic(KeyEvent.VK_P);
+        class path implements ActionListener{
+        	
+    		public void actionPerformed (ActionEvent e){
+    			JTextField start = new JTextField();
+    			JTextField end = new JTextField();
+    			JPanel panel = new JPanel(new GridLayout(2,2));
+    			panel.add(new JLabel("Starting Village:"));
+    			panel.add(start);
+    			panel.add(new JLabel("Destination Village:"));
+    			panel.add(end);
+    			int result = JOptionPane.showConfirmDialog(null, panel, "Maximum Flow(Ford-Fulkerson)",
+		        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		        if (result == JOptionPane.OK_OPTION) {
+		        		LinkedList<Road> p = GUI.g.getPath(start.getText(), end.getText());
+		        		JOptionPane.showMessageDialog(null, "The shortest path from "+start.getText()+" to "+end.getText()+" with this road network is following "+p+".");
+		        } else {
+		            System.out.println("Cancelled");
+		        }//End else
+    		    
+    			}
+        }//end class
+        menuItem.addActionListener(new path());
+        menu.add(menuItem);
+        
         menuItem=new JMenuItem("Austerity");
         menuItem.setMnemonic(KeyEvent.VK_A);
         class mst implements ActionListener{
@@ -227,8 +257,8 @@ public class MenuBar {
     					+ " Gnomes may be replaced, but probably not.", "Austerity(Kruskal MST)",
 		        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		        if (result == JOptionPane.OK_OPTION) {
-		        		Graph gr=GUI.g.kruskal().toUndirected();
-		        		GUI.pg.setGraph(gr);
+		        		GUI.g=GUI.g.kruskal().toUndirected();
+		        		GUI.pg.setGraph(GUI.g);
 			        GUI.pg.repaint();
 		        		
 		        } else {
@@ -238,6 +268,44 @@ public class MenuBar {
     			}
         }//end class
         menuItem.addActionListener(new mst());
+        menu.add(menuItem);
+        
+        //Fourth subMenu
+        menu = new JMenu("Gnome");
+        menu.setMnemonic(KeyEvent.VK_G);
+        menu.getAccessibleContext().setAccessibleDescription(
+                "Use functions which relate to Gnomes");
+        menuBar.add(menu);
+        
+      //Fourth subMenu subMenu
+        
+        gnoMen.setMnemonic(KeyEvent.VK_G);
+        gnoMen.getAccessibleContext().setAccessibleDescription(
+                "Veiw all of your Gnomes");
+        menu.add(gnoMen);
+        
+        menuItem=new JMenuItem("Generate Gnomes");
+        menuItem.setMnemonic(KeyEvent.VK_F);
+        class gg implements ActionListener{
+        	
+    		public void actionPerformed (ActionEvent e){
+    			JTextField numGnomes = new JTextField();
+    			JPanel panel = new JPanel(new GridLayout(1,3));
+    			panel.add(new JLabel("Generate"));
+    			panel.add(numGnomes);
+    			panel.add(new JLabel("Gnome(s)"));
+    			int result = JOptionPane.showConfirmDialog(null, panel, "Gnome Generator",
+		        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		        if (result == JOptionPane.OK_OPTION) {
+		        		GnomeGenerator gg =new GnomeGenerator(Integer.parseInt(numGnomes.getText()),GUI.g);
+		        		JOptionPane.showMessageDialog(null, "Check the Gnomes list to see your Gnomes");
+		        } else {
+		            System.out.println("Cancelled");
+		        }//End else
+    		    
+    			}
+        }//end class
+        menuItem.addActionListener(new gg());
         menu.add(menuItem);
         
         return menuBar;

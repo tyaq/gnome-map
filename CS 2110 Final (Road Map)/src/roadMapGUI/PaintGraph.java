@@ -200,6 +200,8 @@ public class PaintGraph extends JComponent{
 		BufferedImage image1=null;
 		BufferedImage image2=null;
 		BufferedImage image3=null;
+		BufferedImage image4=null;
+		BufferedImage image5=null;
 		try { 
 			String url=getClass().getResource("Village1.png").getPath();
 			url = url.replace("%20", " ");
@@ -230,7 +232,27 @@ public class PaintGraph extends JComponent{
 	    	   	System.out.println("exception v3");
 	    	   
 	       }
-		 BufferedImage[] villis = {image1,image2,image3};
+		try { 
+			String url=getClass().getResource("Village4.png").getPath();
+			url = url.replace("%20", " ");
+			System.out.println(url);
+			image4 = ImageIO.read(new File(url));
+	        
+	       } catch (IOException ex) {
+	    	   	System.out.println("exception v4");
+	    	   
+	       }
+		try { 
+			String url=getClass().getResource("Village5.png").getPath();
+			url = url.replace("%20", " ");
+			System.out.println(url);
+			image5 = ImageIO.read(new File(url));
+	        
+	       } catch (IOException ex) {
+	    	   	System.out.println("exception v5");
+	    	   
+	       }
+		 BufferedImage[] villis = {image1,image2,image3,image4,image5};
 		 return villis;
 	}
 }

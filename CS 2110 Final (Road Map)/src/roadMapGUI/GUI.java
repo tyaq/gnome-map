@@ -16,6 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -30,7 +32,13 @@ public class GUI extends JFrame{
 	public static MenuBar menu = new MenuBar();
 	
 	public static void main(String[] args){
-		JFrame.setDefaultLookAndFeelDecorated(true);
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException
+				| IllegalAccessException | UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//Create and set up the window.
 	    JFrame frame = new JFrame("Gnome Graph");
@@ -47,42 +55,6 @@ public class GUI extends JFrame{
 	    frame.setSize(900, 700);
 	    frame.setVisible(true);
 	}//End main method
-	
-	public GUI(){
-		
-	}
-	
-	
-		
-
-	 
-	    /**
-	     * Create the GUI and show it.  For thread safety,
-	     * this method should be invoked from the
-	     * event-dispatching thread.
-	     */
-	    private static void createAndShowGUI(Graph g) {
-	    		JFrame.setDefaultLookAndFeelDecorated(true);
-	    		
-	    		//Create and set up the window.
-	        JFrame frame = new JFrame("Gnome Graph");
-	        frame.setPreferredSize(new Dimension(900,700));
-	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	 
-	        //Create and set up the content pane.
-	        SandBox demo = new SandBox();
-	        frame.setJMenuBar(demo.createMenuBar());
-	        //frame.setContentPane(demo.createContentPane());
-	        PaintGraph pg = new PaintGraph(g);
-	        
-	        frame.add(pg);
-	 
-	        //Display the window.
-	        frame.setSize(900, 700);
-	        frame.setVisible(true);
-	    }
-	
-	
 	
 
 }//End Class
